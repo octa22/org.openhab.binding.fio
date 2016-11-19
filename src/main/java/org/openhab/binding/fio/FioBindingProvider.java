@@ -16,6 +16,4 @@ import org.openhab.core.binding.BindingProvider;
  */
 public interface FioBindingProvider extends BindingProvider {
     String getItemId(String itemName);
-    String getItemState(String itemName);
-    void setItemState(String itemName, String state);
 }

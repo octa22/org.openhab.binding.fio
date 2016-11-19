@@ -23,6 +23,8 @@ import org.openhab.binding.fio.FioBindingProvider;
 
 import org.apache.commons.lang.StringUtils;
 import org.openhab.core.binding.AbstractActiveBinding;
+import org.openhab.core.items.ItemNotFoundException;
+import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.library.types.StringType;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
@@ -58,6 +60,8 @@ public class FioBinding extends AbstractActiveBinding<FioBindingProvider> {
 	 * was called.
 	 */
 	private BundleContext bundleContext;
+	private ItemRegistry itemRegistry;
+
 	private String token;
     private final String HTTP_CONFLICT="HTTP_409";
 
@@ -154,7 +158,14 @@ public class FioBinding extends AbstractActiveBinding<FioBindingProvider> {
 		// should be reset when activating this binding again
 	}
 
-	
+	public void setItemRegistry(ItemRegistry itemRegistry) {
+		this.itemRegistry = itemRegistry;
+	}
+
+	public void unsetItemRegistry(ItemRegistry itemRegistry) {
+		this.itemRegistry = null;
+	}
+
 	/**
 	 * @{inheritDoc}
 	 */
@@ -191,9 +202,15 @@ public class FioBinding extends AbstractActiveBinding<FioBindingProvider> {
                     balance = getBalance(provider.getItemId(itemName));
                 }
 
-				if (!balance.equals(provider.getItemState(itemName))) {
-					eventPublisher.postUpdate(itemName, new StringType(balance));
-					provider.setItemState(itemName, balance);
+				State oldValue = null;
+				try {
+					oldValue = itemRegistry.getItem(itemName).getState();
+					State newValue = new StringType(balance);
+					if (!oldValue.equals(newValue)) {
+						eventPublisher.postUpdate(itemName, newValue);
+					}
+				} catch (ItemNotFoundException e) {
+					logger.error("Cannot find item " + itemName + " in item registry!");
 				}
 			}
 		}

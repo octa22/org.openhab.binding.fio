@@ -64,19 +64,6 @@ public class FioGenericBindingProvider extends AbstractGenericBindingProvider im
 		return config != null ? (config.getId()) : null;
 	}
 
-	@Override
-	public String getItemState(String itemName) {
-		final FioBindingConfig config = (FioBindingConfig) this.bindingConfigs.get(itemName);
-		return config != null ? (config.getState()) : null;
-	}
-
-	@Override
-	public void setItemState(String itemName, String state) {
-		final FioBindingConfig config = (FioBindingConfig) this.bindingConfigs.get(itemName);
-		config.setState(state);
-	}
-
-
 	/**
 	 * This is a helper class holding binding specific configuration details
 	 * 
@@ -86,27 +73,16 @@ public class FioGenericBindingProvider extends AbstractGenericBindingProvider im
 	class FioBindingConfig implements BindingConfig {
 		// put member fields here which holds the parsed values
 		private String id;
-		private String state;
 
 		FioBindingConfig(String id)
 		{
 			this.id = id;
 		}
-
 		public String getId() {
 			return id;
 		}
-
 		public void setId(String id) {
 			this.id = id;
-		}
-
-		public String getState() {
-			return state;
-		}
-
-		public void setState(String state) {
-			this.state = state;
 		}
 	}
 	
